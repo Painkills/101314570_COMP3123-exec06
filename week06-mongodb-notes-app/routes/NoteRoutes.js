@@ -1,60 +1,107 @@
-const noteModel = require('../models/Notes.js');
+const express = require('express')
+const NoteModel = require('../models/NotesModel');
+const app = express.Router()
+
 //TODO - Create a new Note
-//http://mongoosejs.com/docs/api.html#document_Document-save
-app.post('/notes', (req, res) => {
+// DONE
+app.post('/notes', async (req, res) => {
+    console.log(req.body)
     // Validate request
-    if(!req.body.content) {
+    if(!req.body) {
         return res.status(400).send({
             message: "Note content can not be empty"
         });
     }
-    //TODO - Write your code here to save the note
+    try {
+        const newNote = new NoteModel(req.body)
+        await newNote.save()
+        res.status(200).send({
+            created_note: newNote
+        })
+    } catch (error) {
+        res.status(500).send({
+            error: "Something went wrong when dealing with the database."
+        })
+    }
 });
 
 //TODO - Retrieve all Notes
-//http://mongoosejs.com/docs/api.html#find_find
-app.get('/notes', (req, res) => {
-    // Validate request
-    if(!req.body.content) {
-        return res.status(400).send({
-            message: "Note content can not be empty"
-        });
+// DONE
+app.get('/notes', async(req, res) => {
+    try {
+        const allNotes = await NoteModel.find()
+        res.status(200).send({
+            all_notes: allNotes
+        })
+    } catch (error) {
+        res.status(500).send({
+            error: "Something went wrong when dealing with the database."
+        })
     }
-    //TODO - Write your code here to returns all note
+    
 });
 
-//TODO - Retrieve a single Note with noteId
-//http://mongoosejs.com/docs/api.html#findbyid_findById
-app.get('/notes/:noteId', (req, res) => {
+// TODO - Retrieve a single Note with noteId
+// DONE
+app.get('/notes/:noteId', async(req, res) => {
     // Validate request
-    if(!req.body.content) {
+    if(!req.body) {
         return res.status(400).send({
             message: "Note content can not be empty"
         });
     }
-    //TODO - Write your code here to return onlt one note using noteid
+    try {
+        const locatedNote = await NoteModel.findById(req.params.noteId)
+        res.status(200).send({
+            retrieved_note: locatedNote
+        })
+    } catch (error) {
+        res.status(500).send({
+            error: "Something went wrong when dealing with the database."
+        })
+    }
 });
 
 //TODO - Update a Note with noteId
-//http://mongoosejs.com/docs/api.html#findbyidandupdate_findByIdAndUpdate
-app.put('/notes/:noteId', (req, res) => {
+// DONE
+app.put('/notes/:noteId', async(req, res) => {
     // Validate request
-    if(!req.body.content) {
+    if(!req.body) {
         return res.status(400).send({
             message: "Note content can not be empty"
         });
     }
-    //TODO - Write your code here to update the note using noteid
+    try {
+        const updatedNote = await NoteModel.findByIdAndUpdate(req.params.noteId, req.body)
+        res.status(200).send({
+            updated_note: updatedNote
+        })
+    } catch (error) {
+        res.status(500).send({
+            error: "Something went wrong when dealing with the database."
+        })
+    }
 });
 
 //TODO - Delete a Note with noteId
-//http://mongoosejs.com/docs/api.html#findbyidandremove_findByIdAndRemove
-app.delete('/notes/:noteId', (req, res) => {
+// DONE
+app.delete('/notes/:noteId', async(req, res) => {
     // Validate request
-    if(!req.body.content) {
+    if(!req.body) {
         return res.status(400).send({
             message: "Note content can not be empty"
         });
     }
-    //TODO - Write your code here to delete the note using noteid
+    try {
+        const deletedNote = await NoteModel.findByIdAndDelete(req.params.noteId)
+        res.status(200).send({
+            deleted_note: deletedNote
+        })
+    } catch (error) {
+        res.status(500).send({
+            error: "Something went wrong when dealing with the database."
+        })
+    }
 });
+
+module.exports = app

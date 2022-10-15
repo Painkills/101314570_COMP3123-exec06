@@ -1,15 +1,19 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const noteRoutes = require('./routes/NoteRoutes')
 
-const DB_URL = "mongodb+srv://sa:s3cr3t@cluster0.qa3t4.mongodb.net/gbc-fall2020?retryWrites=true&w=majority"
+const DB_URL = "mongodb+srv://d4tich:get.me.in@cluster0.qibcjdv.mongodb.net/Week6?retryWrites=true&w=majority"
+const PORT_NUM = 8081
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+app.use("/app", noteRoutes)
 
 mongoose.Promise = global.Promise;
 
 // TODO - Update your mongoDB Atals Url here to Connect to the database
+// DONE
 mongoose.connect(DB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -26,6 +30,6 @@ app.get('/', (req, res) => {
 });
 
 
-app.listen(8081, () => {
-    console.log("Server is listening on port 3000");
+app.listen(PORT_NUM, () => {
+    console.log("Server is listening on port", PORT_NUM);
 });
